@@ -49,7 +49,7 @@
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
   :profiles {:dev {:source-paths ["src" "env/dev/clj"]
-                   :jvm-opts ["-Xmx1g" "--add-modules=java.xml.bind"]
+                   :jvm-opts ["-Xmx1g" #_"--add-modules=java.xml.bind"]
                    :dependencies [[binaryage/devtools "0.9.10"]
                                   [figwheel-sidecar "0.5.18"]
                                   [nrepl "0.6.0"]
