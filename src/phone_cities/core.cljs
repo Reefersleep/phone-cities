@@ -113,8 +113,8 @@
                         :border-right            border
                         :border-top              border
                         :background-color        (if selected?
-                                                   "rgba(0,0,0,1)"
-                                                   unselected-card-color)}}
+                                                   unselected-card-color
+                                                   "rgba(0,0,0,1)")}}
       [card-symbol {:card-identity card-identity
                     :class         "card-symbol-left"
                     :height        symbol-height
@@ -127,8 +127,8 @@
                     :fill          color}]]
      [:div.center {:style {:height           (vw center-height)
                            :background-color (if selected?
-                                               color
-                                               unselected-card-color)
+                                               unselected-card-color
+                                               color)
                            :border-left      border
                            :border-right     border}}]
      [:div.bottom {:style {:height                     (vw top-height)
@@ -170,7 +170,7 @@
                              :card-width-in-vw card-width-in-vw}]])))])
 
 (defn home-page []
-  (let [card-width-in-vw 100
+  (let [card-width-in-vw 70
         top-height (-> card-width-in-vw
                        card-width->card-height
                        height-of-card-top)
@@ -194,17 +194,7 @@
      [:div.body {:style {:height "100%"
                          :overflow-y :auto}}
       [stack {:card-width-in-vw card-width-in-vw
-              :card-values      #_(->> color-identities
-                                       (mapcat (fn color-identity->stack [color-identity]
-                                                 (->> (range 1 11)
-                                                      (concat [:handshake-1 :handshake-2 :handshake-3])
-                                                      (map (fn [ident]
-                                                             {:card-identity  ident
-                                                              :color-identity color-identity
-                                                              :selected?      true}))))))
-              @(re-frame.core/subscribe [:cards])}]]
-     #_[:div {:style {:margin-bottom "2%"}}
-        (str "Total score: " @(re-frame.core/subscribe [:score]))]]))
+              :card-values @(re-frame.core/subscribe [:cards])}]]]))
 
 (defn mount-root []
   (reagent.core/render [home-page] (.getElementById js/document "app")))
