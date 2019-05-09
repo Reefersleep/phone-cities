@@ -140,8 +140,8 @@
                            :border-bottom-right-radius (vw border-radius)
                            :padding-left               20
                            :background-color           (if selected?
-                                                         color
-                                                         unselected-card-color)}}]]))
+                                                         unselected-card-color
+                                                         color)}}]]))
 
 (defn stack [{:keys [card-values
                      card-width-in-vw]}]
