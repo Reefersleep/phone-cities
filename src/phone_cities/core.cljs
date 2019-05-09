@@ -183,13 +183,13 @@
      [:div.top {:style {:display :flex
                         :align-items :center
                         :justify-content :center
+                        :position :sticky
+                        :top 0
+                        :z-index 1000
                         :height (vw top-height)
                         :width "100vw"
                         :font-size (vw text-height)
-                        :background-color :white
-                        :position :sticky
-                        :top 0
-                        :z-index 100}}
+                        :background-color :white}}
       @(re-frame.core/subscribe [:score])]
      [:div.body {:style {:height "100%"
                          :overflow-y :auto}}
