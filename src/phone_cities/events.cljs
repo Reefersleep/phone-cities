@@ -29,8 +29,6 @@
                       [i card]))
        (into (sorted-map-by <))))
 
-(prn initialized-cards)
-
 (re-frame.core/reg-event-fx
  :initialize-db
  (fn [_]

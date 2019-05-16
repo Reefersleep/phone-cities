@@ -182,7 +182,7 @@
                    :flex-direction :column}}
      [:div.top {:style {:display :flex
                         :align-items :center
-                        :justify-content :center
+                        :justify-content :space-between
                         :position :sticky
                         :top 0
                         :z-index 1000
@@ -190,7 +190,20 @@
                         :width "100vw"
                         :font-size (vw text-height)
                         :background-color :white}}
-      @(re-frame.core/subscribe [:score])]
+      [:button#reset {:on-click (fn [event]
+                                  (re-frame.core/dispatch [:initialize-db]))
+                      :style {:position :absolute
+                              :left 0
+                              :background-color :transparent
+                              :background-repeat :no-repeat
+                              :border :none
+                              :outline :none}}
+       [:img {:src "/img/refresh.svg"
+              :alt "Reset score"
+              :width "50%"}]]
+      [:div {:style {:text-align :center
+                     :width "100%"}}
+       @(re-frame.core/subscribe [:score])]]
      [:div.body {:style {:height "100%"
                          :overflow-y :auto}}
       [stack {:card-width-in-vw card-width-in-vw
