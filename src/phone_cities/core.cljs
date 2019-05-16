@@ -194,13 +194,14 @@
                                   (re-frame.core/dispatch [:initialize-db]))
                       :style {:position :absolute
                               :left 0
+                              :padding-left "4vw"
                               :background-color :transparent
                               :background-repeat :no-repeat
                               :border :none
                               :outline :none}}
        [:img {:src "/img/refresh.svg"
               :alt "Reset score"
-              :width "50%"}]]
+              :style {:width "10vw"}}]]
       [:div {:style {:text-align :center
                      :width "100%"}}
        @(re-frame.core/subscribe [:score])]]
