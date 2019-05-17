@@ -14,12 +14,7 @@
 (defn card-width->card-height [card-width]
   (* card-width 1.63))
 
-(def color-identities [:white
-                       :blue
-                       :red
-                       :yellow
-                       :green
-                       #_:grey])
+(def color-identities [:yellow :blue :white :green :red])
 
 (def color-identities->rgb-colors {:white  "rgb(293,242,239)"
                                    :blue   "rgb(18,176,237)"
@@ -88,13 +83,15 @@
         symbol-padding-from-horizontal-rim (/ card-height 14.75)
         symbol-width                       (/ card-width-in-vw 6)
         symbol-height                      symbol-width
-        unselected-card-color              :grey]
+        unselected-card-color              :grey
+        a-name                             (str color-identity " " card-identity)]
     [:div.card {:style {:width           (vw card-width)
                         :min-height      "100%" ;; This fixes problem where differences in floating point calculation results would sometime cause the bottom to become disconnected from the top, as well as (as a side-effect, I guess) sometimes causing a gap between some of the tops of layered cards, such as cards 9. and 10 being separated height-wise by a couple of pixels.
                         :display         :flex
                         :flex-direction  :column
                         :justify-content :space-between
                         #_#_:opacity                 1}}
+     [:a {:name a-name}]
      [:div.top {:on-click     (fn [event]
                                 (re-frame.core/dispatch [:mouse-toggle-card index]))
                 :style {:display                 :flex
@@ -177,49 +174,81 @@
                                     :none)}}
    @(re-frame.core/subscribe [:score-for-player player])])
 
+(defn circle [color-identity color-code]
+  (let [size (str 10 "vw")]
+    [:a {:href (case color-identity
+                 :yellow "#top"
+                 :blue   "#:yellow 10"
+                 :white  "#:blue 10"
+                 :green  "#:white 10"
+                 :red    "#:green 10")}
+     [:svg {:width size
+            :height size}
+      [:circle {:cx           "50%"
+                :cy           "50%"
+                :r            "15%"
+                :stroke       :black
+                :stroke-width "2%" #_(if @(re-frame.core/subscribe [:show-indicator? color-identity])
+                                       "2%"
+                                       "0.1%")
+                :fill         color-code #_(get color-identities->rgb-colors color-identity)}]]]))
+
 (defn home-page []
   (let [card-width-in-vw 70
         top-height (-> card-width-in-vw
                        card-width->card-height
                        height-of-card-top)
         text-height (* 0.8 top-height)]
-    [:div {:style {:display        :flex
-                   :min-height     "100vh"
-                   :align-items    :center
-                   :justify-content :space-between
-                   :flex-direction :column}}
-     [:div.top {:style {:display :flex
-                        :align-items :center
-                        :justify-content :space-between
-                        :position :sticky
-                        :top 0
-                        :z-index 1000
-                        :height (vw top-height)
-                        :width "100vw"
-                        :font-size (vw text-height)
-                        :background-color :white}}
-      [:button#reset {:on-click (fn [event]
-                                  (re-frame.core/dispatch [:initialize-db]))
-                      :style {:position :absolute
-                              :left 0
-                              :padding-left "4vw"
-                              :background-color :transparent
-                              :background-repeat :no-repeat
-                              :border :none
-                              :outline :none}}
-       [:img {:src "/img/refresh.svg"
-              :alt "Reset score"
-              :style {:width "10vw"}}]]
-      [:div {:style {:display :flex
-                     :justify-content :center
-                     :text-align :center
-                     :width "100%"}}
-       [score-for :player-1]
-       [score-for :player-2]]]
-     [:div.body {:style {:height "100%"
-                         :overflow-y :auto}}
-      [stack {:card-width-in-vw card-width-in-vw
-              :card-values @(re-frame.core/subscribe [:current-cards])}]]]))
+    [:<>
+     [:div.lol {:style {:display :flex
+                        :flex-direction :column
+                        :justify-content :center
+                        :position :fixed
+                        :left "2vw"
+                        :height "100%"
+                        #_#_:background-color :red}}
+      (->> color-identities
+           (map (juxt identity color-identities->rgb-colors))
+           (map (fn [[color-identity color-code]]
+                  ^{:key color-identity} [circle color-identity color-code])))]
+     [:a {:name "top"}]
+     [:div {:style {:display        :flex
+                    :min-height     "100vh"
+                    :align-items    :center
+                    :justify-content :space-between
+                    :flex-direction :column}}
+      [:div.top {:style {:display :flex
+                         :align-items :center
+                         :justify-content :space-between
+                         :position :sticky
+                         :top 0
+                         :z-index 1000
+                         :height (vw top-height)
+                         :width "100vw"
+                         :font-size (vw text-height)
+                         :background-color :white}}
+       [:button#reset {:on-click (fn [event]
+                                   (re-frame.core/dispatch [:initialize-db]))
+                       :style {:position :absolute
+                               :left 0
+                               :padding-left "4vw"
+                               :background-color :transparent
+                               :background-repeat :no-repeat
+                               :border :none
+                               :outline :none}}
+        [:img {:src "/img/refresh.svg"
+               :alt "Reset score"
+               :style {:width "10vw"}}]]
+       [:div {:style {:display :flex
+                      :justify-content :center
+                      :text-align :center
+                      :width "100%"}}
+        [score-for :player-1]
+        [score-for :player-2]]]
+      [:div.body {:style {:height "100%"
+                          :overflow-y :auto}}
+       [stack {:card-width-in-vw card-width-in-vw
+               :card-values @(re-frame.core/subscribe [:current-cards])}]]]]))
 
 (defn mount-root []
   (reagent.core/render [home-page] (.getElementById js/document "app")))
