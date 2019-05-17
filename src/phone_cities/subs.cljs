@@ -28,37 +28,33 @@
       0)))
 
 (re-frame.core/reg-sub
- :cards
- (fn [db _]
+ :cards-for-player
+ (fn [db [_ player]]
    (->> db
-        :cards)))
+        :cards
+        player)))
 
 (re-frame.core/reg-sub
- :score
- :<- [:cards]
- (fn [cards _]
-   (->> cards
+ :current-cards
+ (fn [{:keys [currently-editing-cards-for-player] :as db} _]
+   (->> db
+        :cards
+        currently-editing-cards-for-player)))
+
+(re-frame.core/reg-sub
+ :currently-editing-cards-for-player
+ (fn [db _]
+   (->> db
+        :currently-editing-cards-for-player)))
+
+(re-frame.core/reg-sub
+ :score-for-player
+ (fn [db [_ player]]
+   (->> db
+        :cards
+        player
         vals
         (group-by :color-identity)
         (map (fn [[color-identity cards]]
                (score-for-one-color cards)))
         (apply +))))
-
-#_(re-frame.core/reg-sub
- :score
- :<- [:cards]
- (fn [cards _]
-   (->> cards
-        (map (fn [[color-identity cards]]
-               (score-for-one-color cards)))
-        (apply +))))
-
-#_(re-frame.core/reg-sub
- :score-for-color
- (fn [db [_ color-identity]]
-   (let [{:keys [:cards :show-score-details?]} db]
-     (when show-score-details?
-       (-> db
-           :cards
-           (get color-identity)
-           score-for-one-color)))))

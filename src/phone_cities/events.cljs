@@ -33,12 +33,23 @@
  :initialize-db
  (fn [_]
    {:db
-    {:cards               initialized-cards
+    {:currently-editing-cards-for-player :player-1
+     :cards {:player-1 initialized-cards
+             :player-2 initialized-cards}
      :colors              color-identities}}))
 
 (re-frame.core/reg-event-db
  :mouse-toggle-card
- (fn [db [_ index]]
+ (fn [{:keys [currently-editing-cards-for-player] :as db} [_ index]]
    (-> db
-       (update-in [:cards index :selected?] not)
-       (update-in [:cards] (partial into (sorted-map-by <))))))
+       (update-in [:cards currently-editing-cards-for-player index :selected?] not)
+       (update-in [:cards :player-1] (partial into (sorted-map-by <)))
+       (update-in [:cards :player-2] (partial into (sorted-map-by <))))))
+
+(re-frame.core/reg-event-db
+ :set-currently-editing-cards-for-player
+ (fn [db [_ player]]
+   (-> db
+       (assoc :currently-editing-cards-for-player player)
+       (update-in [:cards :player-1] (partial into (sorted-map-by <)))
+       (update-in [:cards :player-2] (partial into (sorted-map-by <))))))

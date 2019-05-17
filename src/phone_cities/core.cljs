@@ -169,6 +169,14 @@
                              :card-identity    card-identity
                              :card-width-in-vw card-width-in-vw}]])))])
 
+(defn score-for [player]
+  [:div {:on-click #(re-frame.core/dispatch [:set-currently-editing-cards-for-player player])
+         :style {:width "3em"
+                 :text-decoration (if (#{player} @(re-frame.core/subscribe [:currently-editing-cards-for-player]))
+                                    :underline
+                                    :none)}}
+   @(re-frame.core/subscribe [:score-for-player player])])
+
 (defn home-page []
   (let [card-width-in-vw 70
         top-height (-> card-width-in-vw
@@ -202,13 +210,16 @@
        [:img {:src "/img/refresh.svg"
               :alt "Reset score"
               :style {:width "10vw"}}]]
-      [:div {:style {:text-align :center
+      [:div {:style {:display :flex
+                     :justify-content :center
+                     :text-align :center
                      :width "100%"}}
-       @(re-frame.core/subscribe [:score])]]
+       [score-for :player-1]
+       [score-for :player-2]]]
      [:div.body {:style {:height "100%"
                          :overflow-y :auto}}
       [stack {:card-width-in-vw card-width-in-vw
-              :card-values @(re-frame.core/subscribe [:cards])}]]]))
+              :card-values @(re-frame.core/subscribe [:current-cards])}]]]))
 
 (defn mount-root []
   (reagent.core/render [home-page] (.getElementById js/document "app")))
