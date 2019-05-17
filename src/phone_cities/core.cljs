@@ -143,29 +143,29 @@
 
 (defn stack [{:keys [card-values
                      card-width-in-vw]}]
-  [:div {:style {:width (vw card-width-in-vw)}}
-   (->> card-values
-        (map
-         (fn [[index {:keys [card-identity color-identity selected?]}]]
-           ^{:key index}
-           [:div
-            {:style {:margin-top (if (= 0 index)
-                                   0
-                                   (let [card-height          (->> card-width-in-vw
-                                                                   card-width->card-height)
-                                         negative-card-height (- card-height)
-                                         card-top             (->> card-width-in-vw
-                                                                   card-width->card-height
-                                                                   height-of-card-top)
-                                         distance             (+ negative-card-height card-top)]
-                                     (vw distance)))
-                     :z-index    index       ;; Need z-index in order to prevent flickering of all but the top card when I mouseover their top.
-                     :position   :relative}} ;;Need a :position value in order for z-index to come into effect.
-            [resizable-card {:index            index
-                             :color-identity   color-identity
-                             :selected?        selected?
-                             :card-identity    card-identity
-                             :card-width-in-vw card-width-in-vw}]])))])
+  (let [card-height          (->> card-width-in-vw
+                                  card-width->card-height)
+        negative-card-height (- card-height)
+        card-top             (->> card-width-in-vw
+                                  card-width->card-height
+                                  height-of-card-top)
+        distance             (+ negative-card-height card-top)]
+    [:div {:style {:width (vw card-width-in-vw)}}
+     (->> card-values
+          (map
+           (fn [[index {:keys [card-identity color-identity selected?]}]]
+             ^{:key index}
+             [:div
+              {:style {:margin-top (if (= 0 index)
+                                     0
+                                     (vw distance))
+                       :z-index    index       ;; Need z-index in order to prevent flickering of all but the top card when I mouseover their top.
+                       :position   :relative}} ;;Need a :position value in order for z-index to come into effect.
+              [resizable-card {:index            index
+                               :color-identity   color-identity
+                               :selected?        selected?
+                               :card-identity    card-identity
+                               :card-width-in-vw card-width-in-vw}]])))]))
 
 (defn score-for [player]
   [:div {:on-click #(re-frame.core/dispatch [:set-currently-editing-cards-for-player player])
@@ -201,18 +201,17 @@
                        height-of-card-top)
         text-height (* 0.8 top-height)]
     [:<>
-     [:div.lol {:style {:display :flex
-                        :flex-direction :column
-                        :justify-content :center
-                        :position :fixed
-                        :left "2vw"
-                        :height "100%"
-                        #_#_:background-color :red}}
+     [:div {:id "top"}]
+     [:div.color-chooser-sidebar {:style {:display :flex
+                                          :flex-direction :column
+                                          :justify-content :center
+                                          :position :fixed
+                                          :left "2vw"
+                                          :height "100%"}}
       (->> color-identities
            (map (juxt identity color-identities->rgb-colors))
            (map (fn [[color-identity color-code]]
                   ^{:key color-identity} [circle color-identity color-code])))]
-     [:a {:name "top"}]
      [:div {:style {:display        :flex
                     :min-height     "100vh"
                     :align-items    :center
