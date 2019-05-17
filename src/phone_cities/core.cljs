@@ -91,7 +91,8 @@
                         :flex-direction  :column
                         :justify-content :space-between
                         #_#_:opacity                 1}}
-     [:a {:name a-name}]
+     [:a {:name a-name
+          :id a-name}]
      [:div.top {:on-click     (fn [event]
                                 (re-frame.core/dispatch [:mouse-toggle-card index]))
                 :style {:display                 :flex
@@ -176,22 +177,22 @@
 
 (defn circle [color-identity color-code]
   (let [size (str 10 "vw")]
-    [:a {:href (case color-identity
-                 :yellow "#top"
-                 :blue   "#:yellow 10"
-                 :white  "#:blue 10"
-                 :green  "#:white 10"
-                 :red    "#:green 10")}
-     [:svg {:width size
-            :height size}
-      [:circle {:cx           "50%"
-                :cy           "50%"
-                :r            "15%"
-                :stroke       :black
-                :stroke-width "2%" #_(if @(re-frame.core/subscribe [:show-indicator? color-identity])
-                                       "2%"
-                                       "0.1%")
-                :fill         color-code #_(get color-identities->rgb-colors color-identity)}]]]))
+    [:svg {:on-click #(let [element (.getElementById js/document (case color-identity
+                                                                   :yellow "top"
+                                                                   :blue   ":yellow 10"
+                                                                   :white  ":blue 10"
+                                                                   :green  ":white 10"
+                                                                   :red    ":green 10"))
+                            options (clj->js {:behavior "smooth"})]
+                        (.scrollIntoView element options))
+           :width size
+           :height size}
+     [:circle {:cx           "50%"
+               :cy           "50%"
+               :r            "15%"
+               :stroke       :black
+               :stroke-width "2%"
+               :fill         color-code }]]))
 
 (defn home-page []
   (let [card-width-in-vw 70
