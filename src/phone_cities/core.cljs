@@ -14,13 +14,14 @@
 (defn card-width->card-height [card-width]
   (* card-width 1.63))
 
-(def color-identities [:yellow :blue :white :green :red])
+(def color-identities [:yellow :blue :white :green :red :purple])
 
 (def color-identities->rgb-colors {:white  "rgb(293,242,239)"
                                    :blue   "rgb(18,176,237)"
                                    :red    "rgb(246,60,54)"
                                    :yellow "rgb(250,244,6)"
                                    :green  "rgb(119,185,12)"
+                                   :purple :purple
                                    :grey   :grey})
 
 (defn handshake-icon [{:keys [:height :width :fill]}]
@@ -182,7 +183,8 @@
                                                                    :blue   ":yellow 10"
                                                                    :white  ":blue 10"
                                                                    :green  ":white 10"
-                                                                   :red    ":green 10"))
+                                                                   :red    ":green 10"
+                                                                   :purple ":red 10"))
                             options (clj->js {:behavior "smooth"})]
                         (.scrollIntoView element options))
            :width size

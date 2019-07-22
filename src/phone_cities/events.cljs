@@ -1,7 +1,7 @@
 (ns phone-cities.events
   (:require [re-frame.core]))
 
-(def color-identities [:yellow :blue :white :green :red])
+(def color-identities [:yellow :blue :white :green :red :purple])
 
 (def card-values [:handshake-1
                   :handshake-2
