@@ -209,7 +209,7 @@
                                           :justify-content :center
                                           :position :fixed
                                           :left "2vw"
-                                          :height "100%"}}
+                                          :height "100vh"}}
       (->> color-identities
            (map (juxt identity color-identities->rgb-colors))
            (map (fn [[color-identity color-code]]
